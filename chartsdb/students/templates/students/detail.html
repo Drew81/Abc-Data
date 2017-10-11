@@ -1,0 +1,124 @@
+{% extends 'base/base.html' %}
+<script >
+	{% block jquery %}
+	var endpoint = '/api/details/<pk>/'
+	var defaultData = []
+	var labels = [];
+	$.ajax({ 
+		method: "GET",
+		url: endpoint,
+		success: function(data){
+			labels = data.labels
+			defaultData = data.default
+			setChart()
+			console.log(data)
+			console.log(data.student)
+			
+					},
+					error: function(error_data){
+						console.log("error")
+						console.log(error_data)
+					}
+				})
+
+	function setChart(){
+		var ctx = document.getElementById("myChart").getContext('2d');
+		var myChart = new Chart(ctx, {
+			type: 'bar',
+			data: {
+			    labels: labels,
+			    datasets: [{
+			        label: '# of Votes',
+			         data: defaultData,
+			         backgroundColor: [
+                'rgba(255, 99, 132, 0.2)',
+                'rgba(54, 162, 235, 0.2)',
+                'rgba(255, 206, 86, 0.2)',
+                'rgba(75, 192, 192, 0.2)',
+                'rgba(153, 102, 255, 0.2)',
+                'rgba(255, 159, 64, 0.2)'
+            ],
+            borderColor: [
+                'rgba(255,99,132,1)',
+                'rgba(54, 162, 235, 1)',
+                'rgba(255, 206, 86, 1)',
+                'rgba(75, 192, 192, 1)',
+                'rgba(153, 102, 255, 1)',
+                'rgba(255, 159, 64, 1)'
+            ],
+            borderWidth: 1
+			        }]
+			    }
+			})
+}
+
+
+	{% endblock %}
+</script>
+{% include 'navbar.html' %}
+{% block content %}
+
+
+<div class="container">
+<h1>Student Details:</h1>
+	<table>
+	  <tr>
+	    <th>Student name</th>
+	    <th>Grade</th>
+	    <th>gender</th>
+	    <th>Age</th>
+	  </tr>
+	  <tr>
+	    <td>{{ student.first_name }} {{ student.lst_name }}</td>
+	    <td>{{ student.grade }}</td>
+	    <td>{{ student.gender }}</td>
+	    <td>{{ student.age }}</td>
+	  </tr>
+	</table>
+</div>
+
+
+
+<div class="container">	
+<h3>Incidents:</h3>
+<a href="{% url 'students:new_detail' %}">Add incident</a>
+	<table>
+	  <tr>
+	    <th>Location</th>
+	    <th>Date</th>
+	    <th>Method</th>
+	  </tr>
+	  {% for detail in student.detail_set.all %}
+	  <tr>
+	    <td>{{ detail.location }}</td>
+	    <td>{{ detail.date_added }}</td>
+	    <td>{{ detail.method }}</td>
+	  </tr>
+	  {% endfor %}
+	</table>
+</div>
+
+
+	<div class="container">
+	<h3>Scores: </h3>
+	<a href="{% url 'students:new_score' student.id %}">Add scores</a>
+	<table>
+	 	 <tr>
+		   <th>Math score</th>
+		   <th>Reading score</th> 
+		</tr>
+	{% for score in student.score_set.all %}
+		<tr>
+		    <td>{{ score.math_score }}</td>
+		    <td>{{ score.reading_score }}</td>
+		</tr>
+		
+	{% endfor %}
+	</table>
+	</div> 
+<div class="col-sm-6">
+	<canvas id="myChart2" width="400" height="400"></canvas>
+</div>
+
+
+{% endblock %}

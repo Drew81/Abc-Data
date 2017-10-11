@@ -1,0 +1,10 @@
+{% extends 'base/base.html' %}
+{% block content %}
+{% for score in student.score_set.all %}
+<ul>
+	Score:
+	{{ score.date_added }}
+	<li>{{ score.math_score }}</li>
+</ul>
+	{% endfor %}
+	{% endblock %}
